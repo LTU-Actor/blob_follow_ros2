@@ -1,0 +1,23 @@
+blob_follow:
+  ros__parameters:
+
+
+    enable: false
+    speed: 1
+    turn_mult: 1
+
+    input_mask_topic: "/mask"
+    output_twist_topic: "/control/cmd_vel"
+    input_debug_image_topic: "/routecam/image_raw"
+    top_crop_pct: 0.5
+
+    canny_lower_thresh: 700
+    canny_upper_thresh: 2000
+    line_dilation_size: 5
+
+    hough_rho: 2
+    hough_line_thresh: 85
+    hough_min_line_len: 70
+    hough_max_line_gap: 10
+    line_min_slope: 0.5
+    line_max_slope: 1.7
