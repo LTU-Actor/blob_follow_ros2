@@ -68,10 +68,8 @@ class BlobFollow(Node):
             debug_image = self.debug_image_raw.copy()
             
         mask = self.bridge.imgmsg_to_cv2(ros_mask)
-        lines = self.find_lines(mask)
+        lines = self.find_lines(mask, debug_image=debug_image)
         
-        if debug_image is not None:
-            debug_image = cv.add(debug_image, lines)
         p0 = Vec(cols(lines)/2, rows(lines) - rows(lines)/10)
         force = center_lane(lines, p0, self.debug_image_raw)
 
@@ -83,7 +81,7 @@ class BlobFollow(Node):
             self.twist_pub.publish(twist)
 
 
-    def find_lines(self, mask: cv.Mat):
+    def find_lines(self, mask: cv.Mat, debug_image: cv.Mat = None):
 
         # crop image from top
         rows, cols = mask.shape
@@ -133,6 +131,12 @@ class BlobFollow(Node):
                 l[3] += diffy
 
                 cv.line(line_mat,
+                        (l[0], int(l[1] + 0.5 * rows)),
+                        (l[2], int(l[3] + 0.5 * rows)),
+                        255, 5)
+                
+                if debug_image is not None:
+                    cv.line(debug_image,
                         (l[0], int(l[1] + 0.5 * rows)),
                         (l[2], int(l[3] + 0.5 * rows)),
                         255, 5)
