@@ -80,6 +80,9 @@ class BlobFollow(Node):
 
         if self.config["enable"]:
             self.twist_pub.publish(twist)
+        
+        if debug_image is not None:
+            self.debug_lines_pub.publish(self.bridge.cv2_to_imgmsg(debug_image, "bgr8"))
 
 
     def find_lines(self, mask: cv.Mat, debug_image: cv.Mat = None):
