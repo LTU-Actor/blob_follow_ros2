@@ -14,8 +14,7 @@ def point_on_line(x0, y0, theta, r):
     y = y0 + r * math.sin(theta)
     return Vec(x, y)
 
-def raytrace_find_nonzero(self,
-                            image: cv.Mat,
+def raytrace_find_nonzero(  image: cv.Mat,
                             p0: Vec,
                             theta: float,
                             r_step=5,
@@ -30,7 +29,7 @@ def raytrace_find_nonzero(self,
     rows, cols, _ = image.shape
     # Don't start at zero if using draw_point in loop, see note below
     for r in range(3, iters+3):
-        p = self.point_on_line(p0.x, p0.y, theta, -r * r_step)
+        p = point_on_line(p0.x, p0.y, theta, -r * r_step)
         # convert to int since we are indexing pixels
         p = Vec(int(p.x), int(p.y))
 
