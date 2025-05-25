@@ -1,7 +1,7 @@
 import math
 import cv2 as cv
 import numpy as np
-from .utils import Vec, draw_point, deg2rad, rows, cols
+from .functions import Vec, draw_point, deg2rad, rows, cols
 
 
 def point_on_line(x0, y0, theta, r):

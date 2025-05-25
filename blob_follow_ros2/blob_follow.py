@@ -1,8 +1,8 @@
 import cv2 as cv
 import numpy as np
 import math
-from utils.blob_functions import center_lane
-from utils.utils import Vec, cols, rows
+from blob_follow_ros2.utils.blob_functions import center_lane
+from blob_follow_ros2.utils.functions import Vec, cols, rows
 
 import rclpy
 from rclpy.node import Node
@@ -19,6 +19,7 @@ class BlobFollow(Node):
 
     def __init__(self):
         super().__init__("blob_follow")
+        self.config = {}
 
         # node parameters
         params = [
@@ -133,4 +134,13 @@ class BlobFollow(Node):
 
         return line_mat
 
-    
+def main(args=None):
+    rclpy.init(args=args)
+    node = BlobFollow()
+    rclpy.spin(node)
+    node.destroy_node()
+    rclpy.shutdown()
+
+
+if __name__ == '__main__':
+    main()
