@@ -7,7 +7,7 @@ blob_follow:
     turn_mult: 1
 
     input_mask_topic: "/mask"
-    output_twist_topic: "/control/cmd_vel"
+    output_twist_topic: "/blob/cmd_vel"
     input_debug_image_topic: "/routecam/image_raw"
     top_crop_pct: 0.5
 
