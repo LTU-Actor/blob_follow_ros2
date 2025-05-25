@@ -59,8 +59,9 @@ class BlobFollow(Node):
 
     def debug_image_cb(self, ros_image):
         image_raw = self.bridge.imgmsg_to_cv2(ros_image)
-        rows, cols, _ = image_raw.shape
-        self.debug_image_raw = image_raw[int(self.config["top_crop_pct"] * rows):rows, 0:cols]
+        r = rows(image_raw)
+        c = cols(image_raw)
+        self.debug_image_raw = image_raw[int(self.config["top_crop_pct"] * r):r, 0:c]
 
     def image_cb(self, ros_mask):
         debug_image = None
@@ -84,8 +85,9 @@ class BlobFollow(Node):
     def find_lines(self, mask: cv.Mat, debug_image: cv.Mat = None):
 
         # crop image from top
-        rows, cols = mask.shape
-        mask = mask[int(rows * self.config["top_crop_pct"]):rows, 0:cols]
+        r = rows(mask)
+        c = cols(mask)
+        mask = mask[int(r * self.config["top_crop_pct"]):r, 0:c]
 
         # canny edge detection
         canny_image = cv.Canny(
@@ -131,14 +133,14 @@ class BlobFollow(Node):
                 l[3] += diffy
 
                 cv.line(line_mat,
-                        (l[0], int(l[1] + 0.5 * rows)),
-                        (l[2], int(l[3] + 0.5 * rows)),
+                        (l[0], int(l[1] + 0.5 * r)),
+                        (l[2], int(l[3] + 0.5 * r)),
                         255, 5)
                 
                 if debug_image is not None:
                     cv.line(debug_image,
-                        (l[0], int(l[1] + 0.5 * rows)),
-                        (l[2], int(l[3] + 0.5 * rows)),
+                        (l[0], int(l[1] + 0.5 * r)),
+                        (l[2], int(l[3] + 0.5 * r)),
                         255, 5)
 
         return line_mat

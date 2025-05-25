@@ -26,7 +26,6 @@ def raytrace_find_nonzero(  image: cv.Mat,
     Assumes image is a 1-channel ndarray
     """
 
-    rows, cols, _ = image.shape
     # Don't start at zero if using draw_point in loop, see note below
     for r in range(3, iters+3):
         p = point_on_line(p0.x, p0.y, theta, -r * r_step)
