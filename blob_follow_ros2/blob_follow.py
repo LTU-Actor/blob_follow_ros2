@@ -15,7 +15,7 @@ class BlobFollow(Node):
 
     config: dict
     bridge = CvBridge()
-    debug_image_raw : cv.Mat
+    debug_image_raw : cv.Mat = None
 
     def __init__(self):
         super().__init__("blob_follow")
@@ -63,10 +63,15 @@ class BlobFollow(Node):
         self.debug_image_raw = image_raw[int(self.config["top_crop_pct"] * rows):rows, 0:cols]
 
     def image_cb(self, ros_mask):
-        debug_image = self.debug_image_raw.copy()
+        debug_image = None
+        if self.debug_image_raw:
+            debug_image = self.debug_image_raw.copy()
+            
         mask = self.bridge.imgmsg_to_cv2(ros_mask)
         lines = self.find_lines(mask)
-        debug_image = cv.add(debug_image, lines)
+        
+        if debug_image:
+            debug_image = cv.add(debug_image, lines)
         p0 = Vec(cols(lines)/2, rows(lines) - rows(lines)/10)
         force = center_lane(lines, p0, self.debug_image_raw)
 
