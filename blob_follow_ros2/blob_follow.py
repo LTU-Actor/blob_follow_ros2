@@ -64,13 +64,13 @@ class BlobFollow(Node):
 
     def image_cb(self, ros_mask):
         debug_image = None
-        if self.debug_image_raw:
+        if self.debug_image_raw is not None:
             debug_image = self.debug_image_raw.copy()
             
         mask = self.bridge.imgmsg_to_cv2(ros_mask)
         lines = self.find_lines(mask)
         
-        if debug_image:
+        if debug_image is not None:
             debug_image = cv.add(debug_image, lines)
         p0 = Vec(cols(lines)/2, rows(lines) - rows(lines)/10)
         force = center_lane(lines, p0, self.debug_image_raw)
