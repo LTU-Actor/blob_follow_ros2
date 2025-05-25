@@ -81,7 +81,7 @@ class BlobFollow(Node):
     def find_lines(self, mask: cv.Mat):
 
         # crop image from top
-        rows, cols, _ = mask.shape
+        rows, cols = mask.shape
         mask = mask[int(rows * self.config["top_crop_pct"]):rows, 0:cols]
 
         # canny edge detection
