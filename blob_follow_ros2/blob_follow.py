@@ -1,6 +1,5 @@
 import cv2 as cv
 import numpy as np
-import math
 from blob_follow_ros2.utils.blob_functions import center_lane
 from blob_follow_ros2.utils.functions import Vec, cols, rows
 
@@ -8,6 +7,7 @@ import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Image
 from geometry_msgs.msg import Twist
+from rclpy.parameter_service import SetParametersResult
 from cv_bridge import CvBridge
 
 
@@ -23,7 +23,6 @@ class BlobFollow(Node):
 
         # node parameters
         params = [
-            ("enable", False),
             ("speed", 0),
             ("turn_mult", 0),
             ("input_mask_topic", "/mask"),
@@ -45,6 +44,7 @@ class BlobFollow(Node):
         param_values = self.get_parameters([x[0] for x in params])
         for param in param_values:
             self.config[param.name] = param.value
+        self.add_on_set_parameters_callback(self.params_cb)
 
         # subscribers
         self.create_subscription(
@@ -55,7 +55,12 @@ class BlobFollow(Node):
         # publishers
         self.twist_pub = self.create_publisher(
             Twist, self.config["output_twist_topic"], 1)
-        self.debug_lines_pub = self.create_publisher(Image, "blob/lines", 1)
+        self.debug_lines_pub = self.create_publisher(Image, "blobs/lines", 1)
+
+    def params_cb(self, params):
+        for param in params:
+            self.config[param.name] = param.value
+        return SetParametersResult(successful=True)
 
     def debug_image_cb(self, ros_image):
         image_raw = self.bridge.imgmsg_to_cv2(ros_image)
@@ -75,11 +80,11 @@ class BlobFollow(Node):
         force = center_lane(lines, p0, self.debug_image_raw)
 
         twist = Twist()
-        twist.linear.x = self.config["speed"]
-        twist.angular.z = self.config["turn_mult"] * force.x
+        twist.linear.x = float(self.config["speed"])
+        twist.angular.z = float(self.config["turn_mult"] * force.x)
 
-        if self.config["enable"]:
-            self.twist_pub.publish(twist)
+        
+        self.twist_pub.publish(twist)
         
         if debug_image is not None:
             self.debug_lines_pub.publish(self.bridge.cv2_to_imgmsg(debug_image, "bgr8"))
@@ -122,6 +127,9 @@ class BlobFollow(Node):
                 diffx = l[0] - l[2]
                 diffy = l[1] - l[3]
 
+                if diffx == 0: # potential div by 0
+                    continue
+
                 slope = diffy / diffx
 
                 if abs(slope) < self.config["line_min_slope"] or abs(slope) > self.config["line_max_slope"]:
@@ -136,14 +144,14 @@ class BlobFollow(Node):
                 l[3] += diffy
 
                 cv.line(line_mat,
-                        (l[0], int(l[1] + 0.5 * r)),
-                        (l[2], int(l[3] + 0.5 * r)),
+                        (l[0], int(l[1])),
+                        (l[2], int(l[3])),
                         255, 5)
                 
                 if debug_image is not None:
                     cv.line(debug_image,
-                        (l[0], int(l[1] + 0.5 * r)),
-                        (l[2], int(l[3] + 0.5 * r)),
+                        (l[0], int(l[1])),
+                        (l[2], int(l[3])),
                         255, 5)
 
         return line_mat

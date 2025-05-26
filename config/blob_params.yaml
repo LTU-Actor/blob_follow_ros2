@@ -1,15 +1,13 @@
 blob_follow:
   ros__parameters:
 
-
-    enable: false
-    speed: 1
-    turn_mult: 1
+    speed: 2
+    turn_mult: 10
 
     input_mask_topic: "/mask"
     output_twist_topic: "/blob/cmd_vel"
     input_debug_image_topic: "/routecam/image_raw"
-    top_crop_pct: 0.5
+    top_crop_pct: 0.3
 
     canny_lower_thresh: 700
     canny_upper_thresh: 2000
